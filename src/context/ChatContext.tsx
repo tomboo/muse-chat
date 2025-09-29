@@ -52,6 +52,20 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       sender,
       timestamp: serverTimestamp(),
     });
+
+    // 👇 If user sent a message, simulate a bot reply
+    if (sender === "user") {
+      setBotTyping(true);
+
+      setTimeout(async () => {
+        await addDoc(collection(db, "messages"), {
+          text: `Bot reply to: ${text}`,
+          sender: "bot",
+          timestamp: serverTimestamp(),
+        });
+        setBotTyping(false);
+      }, 1000);
+    }
   };
 
   return (
