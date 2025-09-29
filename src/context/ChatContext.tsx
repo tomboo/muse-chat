@@ -9,11 +9,13 @@ import {
 } from "firebase/firestore";
 import { db } from "../services/firebase";
 
+import { Timestamp } from "firebase/firestore";
+
 export interface MessageType {
   id: string;
   text: string;
   sender: "user" | "bot";
-  timestamp: string;
+  timestamp: Timestamp | null;
 }
 
 interface ChatContextProps {

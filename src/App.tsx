@@ -91,12 +91,10 @@ const App: React.FC = () => {
               <p>{msg.text}</p>
               <span className="text-xs opacity-70 block">
                 {msg.timestamp
-                  ? new Date(msg.timestamp).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })
+                  ? msg.timestamp.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
                   : "…"}
               </span>
+
             </div>
           ))}
           {botTyping && (
