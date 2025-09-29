@@ -1,7 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, ComponentPropsWithoutRef } from "react";
 import { useChat } from "./context/ChatContext";
 import ThemeToggle from "./components/ThemeToggle";
 import { ChevronDown } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const App: React.FC = () => {
   const { messages, sendMessage, botTyping } = useChat();
@@ -18,7 +22,6 @@ const App: React.FC = () => {
     setInput("");
   };
 
-  // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -26,7 +29,6 @@ const App: React.FC = () => {
     }
   }, [input]);
 
-  // Smart auto-scroll + badge logic
   useEffect(() => {
     const chatEl = chatWindowRef.current;
     if (!chatEl) return;
@@ -67,7 +69,6 @@ const App: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <div className="w-full h-[100vh] sm:h-[90vh] sm:max-w-md sm:rounded-2xl sm:shadow-lg p-4 relative flex flex-col bg-white dark:bg-gray-800">
-        {/* Header (desktop only, title only) */}
         <div className="hidden sm:flex items-center justify-between mb-2">
           <h1 className="text-xl font-bold text-gray-800 dark:text-gray-200">
             muse-chat2
@@ -88,13 +89,67 @@ const App: React.FC = () => {
                   : "mr-auto bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-gray-100"
               }`}
             >
-              <p>{msg.text}</p>
+              <div className="prose prose-sm dark:prose-invert max-w-none">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    code({
+                      inline,
+                      className,
+                      children,
+                      ...props
+                    }: ComponentPropsWithoutRef<"code"> & { inline?: boolean }) {
+                      const match = /language-(\w+)/.exec(className || "");
+                      const codeString = String(children).replace(/\n$/, "");
+                      const [copied, setCopied] = React.useState(false);
+
+                      if (!inline && match) {
+                        return (
+                          <div className="relative group">
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(codeString);
+                                setCopied(true);
+                                setTimeout(() => setCopied(false), 1500);
+                              }}
+                              className="absolute top-2 right-2 text-xs px-2 py-1 rounded bg-gray-700 text-white opacity-70 hover:opacity-100"
+                            >
+                              {copied ? "Copied!" : "Copy"}
+                            </button>
+                            <SyntaxHighlighter
+                              style={oneDark}
+                              language={match[1]}
+                              PreTag="div"
+                              {...props}
+                            >
+                              {codeString}
+                            </SyntaxHighlighter>
+                          </div>
+                        );
+                      } else {
+                        return (
+                          <code
+                            className="bg-gray-200 dark:bg-gray-800 px-1.5 py-0.5 rounded text-sm font-mono"
+                            {...props}
+                          >
+                            {children}
+                          </code>
+                        );
+                      }
+                    },
+                  }}
+                >
+                  {msg.text}
+                </ReactMarkdown>
+              </div>
               <span className="text-xs opacity-70 block">
                 {msg.timestamp
-                  ? msg.timestamp.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                  ? msg.timestamp.toDate().toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
                   : "…"}
               </span>
-
             </div>
           ))}
           {botTyping && (
@@ -105,7 +160,7 @@ const App: React.FC = () => {
           <div ref={bottomRef} />
         </div>
 
-        {/* Input Bar (sticky with safe-area) */}
+        {/* Input Bar */}
         <div className="flex space-x-2 sticky bottom-0 bg-white dark:bg-gray-800 pt-2 pb-[env(safe-area-inset-bottom)]">
           <textarea
             ref={textareaRef}
@@ -131,19 +186,17 @@ const App: React.FC = () => {
           </button>
         </div>
 
-        {/* Floating FAB Cluster */}
+        {/* FAB Cluster */}
         <div className="fixed bottom-20 right-4 z-50">
           <div
             className="flex flex-col space-y-3 p-3 bg-white dark:bg-gray-800 rounded-2xl shadow-lg 
                        border border-gray-200 dark:border-gray-700 transform transition-all duration-500 
                        translate-y-6 opacity-0 animate-fab-in"
           >
-            {/* Scroll-to-Bottom with New Message Badge */}
             <div className="relative">
               <button
                 onClick={scrollToBottom}
-                className={`p-2 rounded-full bg-blue-600 text-white shadow-md hover:bg-blue-700 transition 
-                transform transition-all duration-300
+                className={`p-2 rounded-full bg-blue-600 text-white shadow-md hover:bg-blue-700 transition-all duration-300
                 ${showScrollButton ? "opacity-100 scale-100" : "opacity-0 scale-90 pointer-events-none"}`}
               >
                 <ChevronDown className="w-5 h-5" />
@@ -152,8 +205,6 @@ const App: React.FC = () => {
                 <span className="absolute top-0 right-0 block h-3 w-3 rounded-full bg-red-500 border-2 border-white dark:border-gray-800" />
               )}
             </div>
-
-            {/* Theme Toggle */}
             <ThemeToggle />
           </div>
         </div>
