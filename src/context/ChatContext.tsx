@@ -1,82 +1,87 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import {
-  collection,
-  addDoc,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-} from "firebase/firestore";
-import { db } from "../services/firebase";
-
-import { Timestamp } from "firebase/firestore";
+import React, { createContext, useContext, useState } from "react";
+import { v4 as uuid } from "uuid";
+import { fetchBotReply } from "../services/openai";
 
 export interface MessageType {
   id: string;
   text: string;
   sender: "user" | "bot";
-  timestamp: Timestamp | null;
+  timestamp: string;
 }
 
 interface ChatContextProps {
   messages: MessageType[];
-  sendMessage: (text: string, sender?: "user" | "bot") => Promise<void>;
+  setMessages: React.Dispatch<React.SetStateAction<MessageType[]>>;
   botTyping: boolean;
-  setBotTyping: React.Dispatch<React.SetStateAction<boolean>>;
+  sendMessage: (text: string) => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextProps | undefined>(undefined);
 
-export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [botTyping, setBotTyping] = useState(false);
 
-  useEffect(() => {
-    const q = query(collection(db, "messages"), orderBy("timestamp"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const msgs = snapshot.docs.map(
-        (doc) =>
-          ({
-            id: doc.id,
-            ...doc.data(),
-          } as MessageType)
-      );
-      setMessages(msgs);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  const sendMessage = async (text: string, sender: "user" | "bot" = "user") => {
-    await addDoc(collection(db, "messages"), {
+  const sendMessage = async (text: string) => {
+    // 1. Add user message
+    const userMessage: MessageType = {
+      id: uuid(),
       text,
-      sender,
-      timestamp: serverTimestamp(),
-    });
+      sender: "user",
+      timestamp: new Date().toISOString(),
+    };
+    setMessages((prev) => [...prev, userMessage]);
 
-    // 👇 If user sent a message, simulate a bot reply
-    if (sender === "user") {
-      setBotTyping(true);
+    setBotTyping(true);
 
-      setTimeout(async () => {
-        await addDoc(collection(db, "messages"), {
-          text: `Bot reply to: ${text}`,
-          sender: "bot",
-          timestamp: serverTimestamp(),
-        });
-        setBotTyping(false);
-      }, 1000);
+    try {
+      // 2. Call OpenAI API
+      const reader = await fetchBotReply([
+        ...messages.map((m) => ({ role: m.sender, content: m.text })),
+        { role: "user", content: text },
+      ]);
+
+      // 3. Add empty bot message
+      let botText = "";
+      const botMessage: MessageType = {
+        id: uuid(),
+        text: "",
+        sender: "bot",
+        timestamp: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, botMessage]);
+
+      // 4. Stream in chunks
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = new TextDecoder().decode(value);
+
+        // TODO: parse OpenAI stream properly
+        botText += chunk;
+
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === botMessage.id ? { ...m, text: botText } : m
+          )
+        );
+      }
+    } catch (err) {
+      console.error("Error fetching bot reply:", err);
+    } finally {
+      setBotTyping(false);
     }
   };
 
   return (
-    <ChatContext.Provider value={{ messages, sendMessage, botTyping, setBotTyping }}>
+    <ChatContext.Provider value={{ messages, setMessages, botTyping, sendMessage }}>
       {children}
     </ChatContext.Provider>
   );
-};
+}
 
-export const useChat = () => {
-  const ctx = useContext(ChatContext);
-  if (!ctx) throw new Error("useChat must be used within ChatProvider");
-  return ctx;
-};
+export function useChat() {
+  const context = useContext(ChatContext);
+  if (!context) throw new Error("useChat must be used within ChatProvider");
+  return context;
+}
