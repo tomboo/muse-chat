@@ -6,7 +6,7 @@ export interface MessageType {
   id: string;
   text: string;
   sender: "user" | "bot";
-  timestamp: string;
+  timestamp: any; // Firestore Timestamp, Date, or string
 }
 
 interface ChatContextProps {
@@ -30,15 +30,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       timestamp: new Date().toISOString(),
     };
     setMessages((prev) => [...prev, userMessage]);
-
     setBotTyping(true);
 
     try {
-      const reader = await fetchBotReply([
-        ...messages.map((m) => ({ role: m.sender, content: m.text })),
-        { role: "user", content: text },
-      ]);
-
       let botText = "";
       const botMessage: MessageType = {
         id: uuid(),
@@ -48,22 +42,36 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       };
       setMessages((prev) => [...prev, botMessage]);
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = new TextDecoder().decode(value);
-
-        // TODO: parse OpenAI event stream properly
-        botText += chunk;
-
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === botMessage.id ? { ...m, text: botText } : m
-          )
-        );
-      }
-    } catch (err) {
+      await fetchBotReply(
+        [
+          ...messages.map((m) => ({
+            role: m.sender === "bot" ? "assistant" : "user",
+            content: m.text,
+          })),
+          { role: "user", content: text },
+        ],
+        (token) => {
+          botText += token;
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === botMessage.id ? { ...m, text: botText } : m
+            )
+          );
+        }
+      );
+    } catch (err: any) {
       console.error("Error fetching bot reply:", err);
+
+      // Fallback mock reply so UI doesn't stay blank
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: uuid(),
+          text: "(mock reply) Sorry, the AI service is currently unavailable. Please check your quota or try again later.",
+          sender: "bot",
+          timestamp: new Date().toISOString(),
+        },
+      ]);
     } finally {
       setBotTyping(false);
     }
