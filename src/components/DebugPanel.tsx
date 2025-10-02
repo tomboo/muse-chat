@@ -1,26 +1,15 @@
-import React, { useEffect, useState } from "react";
 import { useMode } from "../context/ModeContext";
+import { APP_VERSION } from "../version";
 
-export const DebugPanel: React.FC = () => {
+export function DebugPanel() {
   const { aiMode, storageMode } = useMode();
-  const [lastChanged, setLastChanged] = useState<string>("");
-
-  useEffect(() => {
-    const now = new Date().toLocaleTimeString();
-    setLastChanged(now);
-  }, [aiMode, storageMode]);
 
   return (
-    <div className="text-xs text-gray-700">
-      <p>
-        <strong>AI Mode:</strong> {aiMode}
-      </p>
-      <p>
-        <strong>Storage Mode:</strong> {storageMode}
-      </p>
-      <p>
-        <strong>Last Changed:</strong> {lastChanged || "—"}
-      </p>
+    <div className="bg-gray-100 text-gray-700 p-2 text-xs border-t">
+      <div>AI Mode: {aiMode}</div>
+      <div>Storage Mode: {storageMode}</div>
+      <div>Version: {APP_VERSION}</div>
+      <div>Last change: {new Date().toLocaleTimeString()}</div>
     </div>
   );
-};
+}
