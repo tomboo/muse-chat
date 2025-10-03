@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ThemeToggle from "./components/ThemeToggle";
 import MessageLog from "./components/MessageLog";
 import MessageInput from "./components/MessageInput";
+import pkg from "../package.json";   // Import version from package.json
 
 function App() {
   const [messages, setMessages] = useState<
@@ -75,7 +76,7 @@ function App() {
         <div className="text-xs bg-gray-100 dark:bg-gray-800 rounded p-2">
           <h2 className="font-semibold mb-1">Debug Panel</h2>
           <ul className="space-y-1">
-            <li><strong>Version:</strong> v6.7.0-dev</li>
+            <li><strong>Version:</strong> v{pkg.version}</li>
             <li><strong>AI Mode:</strong> {aiEnabled ? "On" : "Off"}</li>
             <li><strong>Storage:</strong> {storageEnabled ? "On" : "Off"}</li>
             <li><strong>Messages:</strong> {messages.length}</li>

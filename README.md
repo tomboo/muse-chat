@@ -42,3 +42,6 @@ This is the frozen baseline for Muse Chat development.
 - Debug panel is always visible (can get tall if messages grow)
 - No persistence of messages (clears on reload)
 - AI/Storage toggles do not affect actual backend functionality
+
+## 📖 Documentation Entry Point
+See [docs/overview.md](docs/overview.md) for the full project documentation overview.
