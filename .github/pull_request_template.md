@@ -1,36 +1,25 @@
-# Pull Request
-
-## Description
-<!-- What changes are included in this PR? -->
-
-## Related Issues
-<!-- Link issues or tasks that this PR addresses -->
+# ✨ Summary
+<!-- Describe the change -->
 
 ---
 
-## Checklist (Baseline Verification)
-
-### Header
-- [ ] App title is visible
-- [ ] Dark/Light Mode toggle works and persists
-- [ ] AI toggle present, stateful, reflected in Debug Panel
-- [ ] Storage toggle present, stateful, reflected in Debug Panel
-
-### Main UI
-- [ ] Scrollable message log works
-- [ ] User vs Bot bubbles styled correctly
-- [ ] Timestamps appear under each message
-
-### Footer
-- [ ] Input box + Send button works
-- [ ] Debug panel shows version, AI status, Storage status, message count
-
-### Behavior
-- [ ] Bot always replies after user message (placeholder works)
-- [ ] AI/Storage toggles update their states correctly
-- [ ] Theme preference persists via localStorage
+## 🔗 Related
+<!-- Link related issues if any (optional) -->
 
 ---
 
-## Changelog Update
-- [ ] I have updated `CHANGELOG.md` to reflect these changes
+## ✅ Checklist
+- [ ] Code tested locally
+- [ ] README updated if needed
+- [ ] Feature is stable enough to merge into `main`
+
+---
+
+## 🔀 Merge Strategy
+- Always **Squash and Merge** into `main`
+- Commit message should follow convention, e.g.:
+  ```
+  feat(ui): add collapsible Debug Panel
+  fix(core): correct null reference in MessageLog
+  chore(docs): update README
+  ```

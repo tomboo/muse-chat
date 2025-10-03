@@ -1,47 +1,49 @@
-# Muse Chat v6.7.0-dev (Baseline)
+# Muse Chat
 
-This is the frozen baseline for Muse Chat development.
+Muse Chat is a lightweight chat application built with React, Vite, and Firebase.
 
-## ✅ Feature Checklist
+---
 
-- **Header**
-  - App title
-  - Dark/Light Mode toggle (persistent)
-  - AI toggle (stateful, reflected in Debug Panel)
-  - Storage toggle (stateful, reflected in Debug Panel)
+## 🚀 Workflow (Solo Developer)
 
-- **Main UI**
-  - Scrollable message log
-  - User vs Bot bubbles
-  - Timestamps under each bubble
+- **Branches**
+  - `main` → stable branch (always working, used for releases)
+  - `feature` → active development branch
 
-- **Footer**
-  - Message input box + send button
-  - Debug panel showing version, AI mode, Storage mode, and message count
+- **Development Cycle**
+  1. Commit all work to `feature`
+  2. When stable → merge `feature` into `main`
+  3. (Optional) Tag a release on `main`:
+     ```bash
+     git tag -a v1.0.0 -m "Stable release v1.0.0"
+     git push origin v1.0.0
+     ```
 
-- **Behavior**
-  - Bot always replies after user message (placeholder)
-  - AI/Storage toggles are stateful
-  - Dark/Light mode persisted in localStorage
+---
 
-## 📜 Changelog Template
+## 🛠️ Setup
 
-**v6.7.x-dev**
-- ✅ Added [new feature]
-- 🔄 Changed [behavior difference]
-- 🛠 Fixed [bug/regression]
-- ⚠️ Known issues [list]
+```bash
+npm install
+npm run dev
+```
 
-## 🔮 Pending Features (Not in Baseline)
-- Collapsible Debug Panel (toggle open/close)
-- AI toggle actually switches between reply vs silent mode
-- GitHub Actions workflow to enforce changelog updates
-- Real Firebase/Storage integration (Storage toggle is placeholder)
+- Requires Firebase config (`src/services/firebase.ts`)
+- Uses TailwindCSS for styling (with typography + dark mode plugins)
 
-## 🐞 Known Issues
-- Debug panel is always visible (can get tall if messages grow)
-- No persistence of messages (clears on reload)
-- AI/Storage toggles do not affect actual backend functionality
+---
 
-## 📖 Documentation Entry Point
-See [docs/overview.md](docs/overview.md) for the full project documentation overview.
+## ✅ Features
+- Dark/Light mode toggle
+- AI toggle
+- Storage toggle
+- Collapsible Debug Panel
+- Message log
+
+---
+
+## 📝 Contributing
+
+As a solo project, contributions are managed simply:
+- Work happens on the `feature` branch
+- Merge to `main` only when stable
