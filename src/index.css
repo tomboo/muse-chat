@@ -1,10 +1,6 @@
-/* src/index.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Optional: some sensible defaults */
-html, body, #root {
-  height: 100%;
-  margin: 0;
-}
+/* Optional: smooth font rendering */
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Sun, Moon } from "lucide-react";
 
 const ThemeToggle: React.FC = () => {
   const [dark, setDark] = useState(
@@ -7,11 +6,12 @@ const ThemeToggle: React.FC = () => {
   );
 
   useEffect(() => {
+    const root = document.documentElement;
     if (dark) {
-      document.documentElement.classList.add("dark");
+      root.classList.add("dark");
       localStorage.setItem("theme", "dark");
     } else {
-      document.documentElement.classList.remove("dark");
+      root.classList.remove("dark");
       localStorage.setItem("theme", "light");
     }
   }, [dark]);
@@ -19,9 +19,9 @@ const ThemeToggle: React.FC = () => {
   return (
     <button
       onClick={() => setDark(!dark)}
-      className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+      className="px-4 py-2 rounded bg-blue-500 text-white dark:bg-yellow-500"
     >
-      {dark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+      {dark ? "🌙 Dark Mode" : "☀️ Light Mode"}
     </button>
   );
 };
