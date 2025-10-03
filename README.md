@@ -47,3 +47,10 @@ npm run dev
 As a solo project, contributions are managed simply:
 - Work happens on the `feature` branch
 - Merge to `main` only when stable
+
+---
+
+## 🔖 Project Context
+
+For the full development workflow, current feature set, and version baseline, see  
+[docs/CONTEXT.md](docs/CONTEXT.md).
