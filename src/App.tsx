@@ -10,6 +10,7 @@ function App() {
   >([]);
   const [aiEnabled, setAiEnabled] = useState(false);
   const [storageEnabled, setStorageEnabled] = useState(false);
+  const [showDebug, setShowDebug] = useState(false); // Collapsible state
 
   const handleSend = (text: string) => {
     if (!text.trim()) return;
@@ -68,19 +69,28 @@ function App() {
         <MessageLog messages={messages} />
       </main>
 
-      {/* Footer with input + debug panel */}
+      {/* Footer with input + collapsible debug panel */}
       <footer className="border-t border-gray-200 dark:border-gray-700 p-4 space-y-4">
         <MessageInput onSend={handleSend} />
 
-        {/* Debug panel showing metadata */}
-        <div className="text-xs bg-gray-100 dark:bg-gray-800 rounded p-2">
-          <h2 className="font-semibold mb-1">Debug Panel</h2>
-          <ul className="space-y-1">
-            <li><strong>Version:</strong> v{pkg.version}</li>
-            <li><strong>AI Mode:</strong> {aiEnabled ? "On" : "Off"}</li>
-            <li><strong>Storage:</strong> {storageEnabled ? "On" : "Off"}</li>
-            <li><strong>Messages:</strong> {messages.length}</li>
-          </ul>
+        {/* Collapsible Debug panel */}
+        <div className="text-xs bg-gray-100 dark:bg-gray-800 rounded">
+          <button
+            onClick={() => setShowDebug((prev) => !prev)}
+            className="w-full text-left px-2 py-1 font-semibold bg-gray-200 dark:bg-gray-700 rounded-t"
+          >
+            {showDebug ? "▼ Debug Panel" : "▶ Debug Panel"}
+          </button>
+          {showDebug && (
+            <div className="p-2">
+              <ul className="space-y-1">
+                <li><strong>Version:</strong> v{pkg.version}</li>
+                <li><strong>AI Mode:</strong> {aiEnabled ? "On" : "Off"}</li>
+                <li><strong>Storage:</strong> {storageEnabled ? "On" : "Off"}</li>
+                <li><strong>Messages:</strong> {messages.length}</li>
+              </ul>
+            </div>
+          )}
         </div>
       </footer>
     </div>
