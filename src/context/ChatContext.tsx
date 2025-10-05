@@ -1,40 +1,71 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { MessageType } from "./ChatContextTypes";
-import { useMode } from "./ModeContext";
+import { useSettings } from "./SettingsContext";
+
+export interface Message {
+  id: string;
+  sender: "user" | "bot";
+  text: string;
+  timestamp: number;
+}
 
 interface ChatContextProps {
-  messages: MessageType[];
-  addMessage: (msg: MessageType) => void;
+  messages: Message[];
+  sendMessage: (text: string) => void;
+  clearChat: () => void;
 }
 
 const ChatContext = createContext<ChatContextProps | undefined>(undefined);
 
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { storage } = useMode();
-  const [messages, setMessages] = useState<MessageType[]>([]);
+  const { settings } = useSettings();
+  const [messages, setMessages] = useState<Message[]>(() => {
+    const stored = localStorage.getItem("museChatMessages");
+    return stored ? JSON.parse(stored) : [];
+  });
 
   useEffect(() => {
-    storage.loadMessages().then(setMessages);
-  }, [storage]);
+    localStorage.setItem("museChatMessages", JSON.stringify(messages));
+  }, [messages]);
 
-  const addMessage = async (msg: MessageType) => {
-    setMessages((prev) => [...prev, msg]);
-    try {
-      await storage.saveMessage(msg);
-    } catch (err) {
-      console.error("Error saving message:", err);
-    }
+  const sendMessage = (text: string) => {
+    if (!text.trim()) return;
+
+    const newMessage: Message = {
+      id: Date.now().toString(),
+      sender: "user",
+      text,
+      timestamp: Date.now(),
+    };
+
+    setMessages((prev) => [...prev, newMessage]);
+
+    // Mock AI reply
+    setTimeout(() => {
+      const model = settings.model || "mock";
+      const reply: Message = {
+        id: (Date.now() + 1).toString(),
+        sender: "bot",
+        text: `(${model}) Thanks for your message: "${text}"`,
+        timestamp: Date.now(),
+      };
+      setMessages((prev) => [...prev, reply]);
+    }, 1000);
+  };
+
+  const clearChat = () => {
+    setMessages([]);
+    localStorage.removeItem("museChatMessages");
   };
 
   return (
-    <ChatContext.Provider value={{ messages, addMessage }}>
+    <ChatContext.Provider value={{ messages, sendMessage, clearChat }}>
       {children}
     </ChatContext.Provider>
   );
 };
 
-export const useChat = () => {
+export const useChat = (): ChatContextProps => {
   const ctx = useContext(ChatContext);
-  if (!ctx) throw new Error("useChat must be used within ChatProvider");
+  if (!ctx) throw new Error("useChat must be used within a ChatProvider");
   return ctx;
 };

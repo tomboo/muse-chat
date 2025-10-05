@@ -1,56 +1,32 @@
-# Muse Chat
+# Muse Chat v1.2.8 — Docked Sidebar (Animated)
 
-Muse Chat is a lightweight chat application built with React, Vite, and Firebase.
+## Overview
+Replaces floating modals/buttons with a **collapsible left sidebar** that hosts simplified **Settings** and **Debug** panels *inside the sidebar itself*. The sidebar pushes the chat area to the right and provides smooth slide + fade transitions between panels.
 
----
+## What’s Included
+- `src/components/Sidebar.tsx` — collapsible sidebar with docked panels (Settings, Debug)
+- `src/App.tsx` — updated layout using the docked sidebar
+- (No floating `SettingsModal` or `DebugPanel` used anymore)
 
-## 🚀 Workflow (Solo Developer)
+## Features
+- Collapsed `w-12` → expanded `w-64` → docked panel `w-96`
+- Slide + fade transitions when switching between Settings and Debug
+- Compact, sidebar-friendly UIs for both panels
+- Live version, syncing, and error status
+- Manual **Sync Now** and **Reload** buttons inside Debug
 
-- **Branches**
-  - `main` → stable branch (always working, used for releases)
-  - `feature` → active development branch
+## Integration
+1. Replace your `src/components/Sidebar.tsx` and `src/App.tsx` with the files in this overlay.
+2. Remove any imports/usages of floating `SettingsModal`, `SettingsButton`, or `DebugPanel`.
+3. Run the app:
+   ```bash
+   npm run dev
+   ```
+4. Click ☰ to expand the sidebar. Choose **Settings** or **Debug Panel** to open the docked view.
 
-- **Development Cycle**
-  1. Commit all work to `feature`
-  2. When stable → merge `feature` into `main`
-  3. (Optional) Tag a release on `main`:
-     ```bash
-     git tag -a v1.0.0 -m "Stable release v1.0.0"
-     git push origin v1.0.0
-     ```
-
----
-
-## 🛠️ Setup
-
-```bash
-npm install
-npm run dev
-```
-
-- Requires Firebase config (`src/services/firebase.ts`)
-- Uses TailwindCSS for styling (with typography + dark mode plugins)
+## Notes
+- Settings changes are persisted according to the selected storage (local or Firestore).
+- The Debug panel shows the compact runtime state and allows manual sync/reload.
 
 ---
-
-## ✅ Features
-- Dark/Light mode toggle
-- AI toggle
-- Storage toggle
-- Collapsible Debug Panel
-- Message log
-
----
-
-## 📝 Contributing
-
-As a solo project, contributions are managed simply:
-- Work happens on the `feature` branch
-- Merge to `main` only when stable
-
----
-
-## 🔖 Project Context
-
-For the full development workflow, current feature set, and version baseline, see  
-[docs/CONTEXT.md](docs/CONTEXT.md).
+Muse Chat v1.2.8 © 2025

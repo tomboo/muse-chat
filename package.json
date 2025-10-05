@@ -1,6 +1,6 @@
 {
   "name": "muse-chat",
-  "version": "1.2.3",
+  "version": "1.2.6",
   "description": "Muse Chat: streaming AI chat app with mode switching",
   "repository": "https://github.com/tomboo/muse-chat",
   "type": "module",
@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.19",
-    "firebase": "^11.0.0",
+    "firebase": "^11.10.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   }
