@@ -1,25 +1,44 @@
 # ✨ Summary
-<!-- Describe the change -->
+<!-- Describe the purpose of this PR and summarize key changes -->
 
 ---
 
 ## 🔗 Related
-<!-- Link related issues if any (optional) -->
+<!-- Link related issues or discussions (optional) -->
 
 ---
 
 ## ✅ Checklist
-- [ ] Code tested locally
-- [ ] README updated if needed
-- [ ] Feature is stable enough to merge into `main`
+
+### Code & Testing
+- [ ] Builds and runs locally without errors  
+- [ ] Verified all persistent settings (Theme / AI Model / Storage / Debug)  
+- [ ] Completed `docs/REGRESSION-CHECKLIST.md`  
+- [ ] No console or TypeScript warnings  
+
+### Documentation
+- [ ] Updated version in `package.json`  
+- [ ] Updated or verified `CHANGELOG.md`  
+- [ ] Verified `docs/QUICKREF.md` and related docs are current  
 
 ---
 
 ## 🔀 Merge Strategy
-- Always **Squash and Merge** into `main`
-- Commit message should follow convention, e.g.:
+- Always **Squash and Merge** into `main`  
+- Use a concise, semantic commit message:
   ```
-  feat(ui): add collapsible Debug Panel
-  fix(core): correct null reference in MessageLog
-  chore(docs): update README
+  feat(ui): add version display to Debug Panel
+  fix(types): correct sender type in App.tsx
+  chore(docs): add QUICKREF.md for release workflow
   ```
+
+---
+
+## 🏷️ Post-Merge Steps
+After merge:
+```bash
+git checkout main
+git pull origin main
+git tag -a vX.Y.Z -m "Release vX.Y.Z: short summary"
+git push origin vX.Y.Z
+```
