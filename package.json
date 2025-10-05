@@ -1,6 +1,6 @@
 {
   "name": "muse-chat",
-  "version": "1.2.6",
+  "version": "1.2.9",
   "description": "Muse Chat: streaming AI chat app with mode switching",
   "repository": "https://github.com/tomboo/muse-chat",
   "type": "module",
