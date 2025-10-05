@@ -26,6 +26,7 @@
 ## 🔀 Merge Strategy
 - Always **Squash and Merge** into `main`  
 - Use a concise, semantic commit message:
+
   ```
   feat(ui): add version display to Debug Panel
   fix(types): correct sender type in App.tsx
