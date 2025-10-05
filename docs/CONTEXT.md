@@ -46,7 +46,7 @@ This file captures the simplified development workflow and current feature set, 
   - Simplified workflow & docs
   - Collapsible Debug Panel
   - Cleanup of old stage-based process
-
+git 
 ---
 
 ✅ Use this file as the baseline for all new work going forward.

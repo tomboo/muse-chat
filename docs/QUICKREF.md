@@ -1,31 +1,47 @@
-# 🚀 Quick Reference – Muse Chat Workflow
+# Muse Chat – Quick Reference
+
+## 🔀 Merge + Release Protocol
 
 ### Branches
-- `main` → stable (releases)
+- `main` → stable, production-ready
 - `feature` → active development
 
-### Daily Workflow
-```bash
-git checkout feature
-git add .
-git commit -m "feat: describe your change"
-git push origin feature
-```
+### Cycle
+1. Develop on `feature`
+2. Run `docs/REGRESSION-CHECKLIST.md`
+3. Bump version in `package.json`
+4. Open PR → squash & merge → main
+5. Tag release on `main`
 
-### Merge to main (when stable)
+### Commands
+
 ```bash
+# 1. Ensure clean feature branch
+git checkout feature
+git pull origin feature
+git add .
+git commit -m "update"
+git pull origin main --rebase
+git push origin feature
+
+# 2. Regression test
+npm run build && npm run preview
+
+# 3. Version bump
+git add package.json
+git commit -m "Bump version to 1.x.x"
+git push origin feature
+
+# 4. Merge PR (squash) → main
 git checkout main
 git pull origin main
-git merge feature
-git push origin main
+
+# 5. Tag release
+git tag -a v1.x.x -m "Release v1.x.x: description"
+git push origin v1.x.x
 ```
 
-### Tag a release
-```bash
-git tag -a vX.Y.Z -m "Release vX.Y.Z: description"
-git push origin vX.Y.Z
-```
-
-### Create GitHub Release
-- Use `docs/release-template.md` for notes
-- Paste into GitHub Release form
+### Related Docs
+- `docs/REGRESSION-CHECKLIST.md`
+- `docs/VERSIONING.md`
+- `docs/release-template.md`
