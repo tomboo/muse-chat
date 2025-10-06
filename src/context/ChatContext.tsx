@@ -16,45 +16,57 @@ interface ChatContextProps {
 
 const ChatContext = createContext<ChatContextProps | undefined>(undefined);
 
+const STORAGE_KEY = "museChatHistory";
+
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { settings } = useSettings();
   const [messages, setMessages] = useState<Message[]>(() => {
-    const stored = localStorage.getItem("museChatMessages");
-    return stored ? JSON.parse(stored) : [];
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? (JSON.parse(raw) as Message[]) : [];
+    } catch {
+      return [];
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem("museChatMessages", JSON.stringify(messages));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    } catch (e) {
+      console.error("Failed to persist chat history", e);
+    }
   }, [messages]);
 
+  const push = (m: Message) => setMessages((prev) => [...prev, m]);
+
   const sendMessage = (text: string) => {
-    if (!text.trim()) return;
+    const content = text.trim();
+    if (!content) return;
+    const now = Date.now();
 
-    const newMessage: Message = {
-      id: Date.now().toString(),
+    push({
+      id: `${now}`,
       sender: "user",
-      text,
-      timestamp: Date.now(),
-    };
+      text: content,
+      timestamp: now,
+    });
 
-    setMessages((prev) => [...prev, newMessage]);
-
-    // Mock AI reply
     setTimeout(() => {
       const model = settings.model || "mock";
-      const reply: Message = {
-        id: (Date.now() + 1).toString(),
+      push({
+        id: `${Date.now()}-bot`,
         sender: "bot",
-        text: `(${model}) Thanks for your message: "${text}"`,
+        text: `(${model}) Thanks for your message: "${content}"`,
         timestamp: Date.now(),
-      };
-      setMessages((prev) => [...prev, reply]);
+      });
     }, 1000);
   };
 
   const clearChat = () => {
     setMessages([]);
-    localStorage.removeItem("museChatMessages");
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {}
   };
 
   return (

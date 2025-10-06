@@ -1,32 +1,25 @@
-# Muse Chat v1.2.8 — Docked Sidebar (Animated)
+# Muse Chat v1.2.9 – Chat History Overlay
 
-## Overview
-Replaces floating modals/buttons with a **collapsible left sidebar** that hosts simplified **Settings** and **Debug** panels *inside the sidebar itself*. The sidebar pushes the chat area to the right and provides smooth slide + fade transitions between panels.
+This overlay enables **persistent Chat History** using `localStorage` and enhances the Debug view with **message count** + **Clear Chat History`**.
 
-## What’s Included
-- `src/components/Sidebar.tsx` — collapsible sidebar with docked panels (Settings, Debug)
-- `src/App.tsx` — updated layout using the docked sidebar
-- (No floating `SettingsModal` or `DebugPanel` used anymore)
+## Files Included
+- `src/context/ChatContext.tsx` — persists messages under `museChatHistory`.
+- `src/components/ChatLog.tsx` — auto-scrolls and shows **absolute timestamps**.
+- `src/components/Sidebar.tsx` — Debug shows message count and adds **Clear Chat History**.
 
-## Features
-- Collapsed `w-12` → expanded `w-64` → docked panel `w-96`
-- Slide + fade transitions when switching between Settings and Debug
-- Compact, sidebar-friendly UIs for both panels
-- Live version, syncing, and error status
-- Manual **Sync Now** and **Reload** buttons inside Debug
+## Install
+Copy these files into your project, replacing existing ones. Then run:
+```bash
+npm run dev
+```
 
-## Integration
-1. Replace your `src/components/Sidebar.tsx` and `src/App.tsx` with the files in this overlay.
-2. Remove any imports/usages of floating `SettingsModal`, `SettingsButton`, or `DebugPanel`.
-3. Run the app:
-   ```bash
-   npm run dev
-   ```
-4. Click ☰ to expand the sidebar. Choose **Settings** or **Debug Panel** to open the docked view.
+## Behavior
+- Each message (user + bot reply) is appended and stored in `localStorage`.
+- On refresh, chat history loads automatically.
+- Debug panel: shows message count + lets you clear history instantly.
 
-## Notes
-- Settings changes are persisted according to the selected storage (local or Firestore).
-- The Debug panel shows the compact runtime state and allows manual sync/reload.
+## Next (Phase 2 – Firestore Sync)
+A follow-on overlay will add Firestore-based chat history sync with toggles in Settings.
 
 ---
-Muse Chat v1.2.8 © 2025
+Muse Chat © 2025

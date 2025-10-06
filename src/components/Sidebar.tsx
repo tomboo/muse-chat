@@ -1,25 +1,25 @@
 import React, { useMemo, useState } from "react";
 import { useSettings } from "../context/SettingsContext";
-import { loadSettings, saveSettings } from "../services/firestore";
+import { useChat } from "../context/ChatContext";
+import { saveSettings } from "../services/firestore";
 import packageJson from "../../package.json";
 
 type Panel = "settings" | "debug" | null;
 
 const Sidebar: React.FC = () => {
-  const { settings, updateSetting, setSettings, syncing, error } = useSettings();
+  const { settings, updateSetting, syncing, error } = useSettings();
+  const { messages, clearChat } = useChat();
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<Panel>(null);
 
   const version = packageJson.version;
 
-  // Width logic
   const widthClass = useMemo(() => {
-    if (panel) return "w-96"; // docked content open
-    return open ? "w-64" : "w-12"; // expanded menu or collapsed
+    if (panel) return "w-96";
+    return open ? "w-64" : "w-12";
   }, [open, panel]);
 
   const handleToggle = () => {
-    // Collapse fully if a panel is open; otherwise toggle open/collapse
     if (panel) {
       setPanel(null);
       setOpen(true);
@@ -42,7 +42,6 @@ const Sidebar: React.FC = () => {
     <aside
       className={`h-screen bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-r dark:border-gray-700 transition-all duration-300 flex flex-col ${widthClass}`}
     >
-      {/* Header / Toggle */}
       <div className="flex items-center justify-between p-2">
         <button
           onClick={handleToggle}
@@ -59,34 +58,35 @@ const Sidebar: React.FC = () => {
         )}
       </div>
 
-      {/* Menu */}
       <nav className="flex flex-col gap-1 p-2">
         <button
           onClick={openSettings}
-          className={`flex items-center gap-2 px-3 py-2 rounded text-sm transition-colors hover:bg-gray-200 dark:hover:bg-gray-700 ${panel === "settings" ? "bg-gray-200 dark:bg-gray-700" : ""}`}
+          className={`flex items-center gap-2 px-3 py-2 rounded text-sm transition-colors hover:bg-gray-200 dark:hover:bg-gray-700 ${
+            panel === "settings" ? "bg-gray-200 dark:bg-gray-700" : ""
+          }`}
           title="Settings"
         >
           ⚙️ {open && <span>Settings</span>}
         </button>
         <button
           onClick={openDebug}
-          className={`flex items-center gap-2 px-3 py-2 rounded text-sm transition-colors hover:bg-gray-200 dark:hover:bg-gray-700 ${panel === "debug" ? "bg-gray-200 dark:bg-gray-700" : ""}`}
+          className={`flex items-center gap-2 px-3 py-2 rounded text-sm transition-colors hover:bg-gray-200 dark:hover:bg-gray-700 ${
+            panel === "debug" ? "bg-gray-200 dark:bg-gray-700" : ""
+          }`}
           title="Debug Panel"
         >
           🧰 {open && <span>Debug Panel</span>}
         </button>
       </nav>
 
-      {/* Docked content */}
       <div className="relative flex-1 overflow-hidden">
-        {/* Placeholder when no panel selected */}
         {!panel && open && (
           <div className="h-full p-3 text-xs text-gray-500 dark:text-gray-300 opacity-80">
             Select an item above to view details.
           </div>
         )}
 
-        {/* Animated containers */}
+        {/* Settings Panel */}
         <div
           className={`absolute inset-0 p-3 overflow-y-auto transition-all duration-300 transform ${
             panel === "settings"
@@ -95,7 +95,6 @@ const Sidebar: React.FC = () => {
           }`}
           aria-hidden={panel !== "settings"}
         >
-          {/* Simplified Settings Panel */}
           <h3 className="text-sm font-semibold mb-3">Settings</h3>
           <div className="space-y-3 text-sm">
             <div>
@@ -141,8 +140,6 @@ const Sidebar: React.FC = () => {
                   try {
                     if (settings.storage === "firestore") {
                       await saveSettings(settings);
-                    } else {
-                      // local mode save happens automatically via context effect
                     }
                   } catch (e) {
                     console.error("Save failed:", e);
@@ -162,6 +159,7 @@ const Sidebar: React.FC = () => {
           </div>
         </div>
 
+        {/* Debug Panel */}
         <div
           className={`absolute inset-0 p-3 overflow-y-auto transition-all duration-300 transform ${
             panel === "debug"
@@ -170,12 +168,12 @@ const Sidebar: React.FC = () => {
           }`}
           aria-hidden={panel !== "debug"}
         >
-          {/* Simplified Debug Panel */}
           <h3 className="text-sm font-semibold mb-3">Debug</h3>
           <div className="space-y-2 text-xs">
             <div className="opacity-70">Version: v{version}</div>
             {syncing && <div className="text-yellow-500">Syncing…</div>}
             {error && <div className="text-red-500">Error: {error}</div>}
+            <div className="opacity-70">Messages: {messages.length}</div>
           </div>
 
           <div className="mt-3 flex gap-2">
@@ -190,21 +188,13 @@ const Sidebar: React.FC = () => {
               }}
               className="px-3 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700"
             >
-              Sync Now
+              Sync Settings
             </button>
             <button
-              onClick={async () => {
-                try {
-                  const remote = await loadSettings();
-                  setSettings(remote);
-                  console.log("Loaded remote settings");
-                } catch (e) {
-                  console.error("Load failed:", e);
-                }
-              }}
-              className="px-3 py-1 bg-gray-600 text-white rounded text-xs hover:bg-gray-700"
+              onClick={() => clearChat()}
+              className="px-3 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700"
             >
-              Reload
+              Clear Chat History
             </button>
             <button
               onClick={() => setPanel(null)}
