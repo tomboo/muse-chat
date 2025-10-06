@@ -1,32 +1,45 @@
-# Muse Chat v1.2.8 — Docked Sidebar (Animated)
+# Muse Chat Branching Flow
 
-## Overview
-Replaces floating modals/buttons with a **collapsible left sidebar** that hosts simplified **Settings** and **Debug** panels *inside the sidebar itself*. The sidebar pushes the chat area to the right and provides smooth slide + fade transitions between panels.
+This folder documents the branching model used in Muse Chat.
 
-## What’s Included
-- `src/components/Sidebar.tsx` — collapsible sidebar with docked panels (Settings, Debug)
-- `src/App.tsx` — updated layout using the docked sidebar
-- (No floating `SettingsModal` or `DebugPanel` used anymore)
+## Diagram
+<p align="center">
+  <img src="./muse-chat-git-flow.svg" alt="Muse Chat Git Flow" width="900"/>
+</p>
 
-## Features
-- Collapsed `w-12` → expanded `w-64` → docked panel `w-96`
-- Slide + fade transitions when switching between Settings and Debug
-- Compact, sidebar-friendly UIs for both panels
-- Live version, syncing, and error status
-- Manual **Sync Now** and **Reload** buttons inside Debug
+## Branch Roles
 
-## Integration
-1. Replace your `src/components/Sidebar.tsx` and `src/App.tsx` with the files in this overlay.
-2. Remove any imports/usages of floating `SettingsModal`, `SettingsButton`, or `DebugPanel`.
-3. Run the app:
-   ```bash
-   npm run dev
-   ```
-4. Click ☰ to expand the sidebar. Choose **Settings** or **Debug Panel** to open the docked view.
+- <strong>main</strong>: Stable, production-ready branch. Releases are tagged here (e.g., <code>v1.2.8</code>).
+- <strong>develop/vX.Y.Z</strong>: Integration branch for a milestone (e.g., <code>develop/v1.2.9</code>). All features/fixes for that version merge here first.
+- <strong>feature/vX.Y.Z-*</strong>: Short-lived branches for new features (e.g., <code>feature/v1.2.9-chat-history</code>).
+- <strong>fix/vX.Y.Z-*</strong>: Short-lived branches for bug fixes during the milestone (e.g., <code>fix/v1.2.9-darkmode</code>).
 
-## Notes
-- Settings changes are persisted according to the selected storage (local or Firestore).
-- The Debug panel shows the compact runtime state and allows manual sync/reload.
+## Example Flow
+
+1. Create integration branch for milestone: <code>develop/v1.2.9</code>
+2. Create feature branches off develop: <code>feature/v1.2.9-chat-history</code>, etc.
+3. Merge features into develop with <code>--no-ff</code>:
+   <pre>git checkout develop/v1.2.9
+git merge feature/v1.2.9-chat-history --no-ff -m "Merge chat history feature"</pre>
+4. When stable, merge develop → main and tag the release:
+   <pre>git checkout main
+git merge develop/v1.2.9 --no-ff -m "Merge v1.2.9 milestone"
+git tag -a v1.2.9 -m "Release v1.2.9"
+git push origin main --tags</pre>
+
+## Quick Reference: Naming Conventions
+
+<table>
+  <thead>
+    <tr><th>Branch Type</th><th>Pattern</th><th>Example</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Feature</td><td><code>feature/&lt;version&gt;-&lt;name&gt;</code></td><td><code>feature/v1.2.9-chat-history</code></td></tr>
+    <tr><td>Fix</td><td><code>fix/&lt;version&gt;-&lt;desc&gt;</code></td><td><code>fix/v1.2.9-darkmode</code></td></tr>
+    <tr><td>Experiment</td><td><code>experiment/&lt;topic&gt;</code></td><td><code>experiment/rag-engine</code></td></tr>
+    <tr><td>Hotfix</td><td><code>hotfix/&lt;version&gt;</code></td><td><code>hotfix/v1.2.8.1</code></td></tr>
+  </tbody>
+</table>
 
 ---
-Muse Chat v1.2.8 © 2025
+© 2025 Muse Chat
