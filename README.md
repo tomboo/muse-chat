@@ -1,45 +1,25 @@
-# Muse Chat Branching Flow
+# Muse Chat v1.2.9 – Chat History Overlay
 
-This folder documents the branching model used in Muse Chat.
+This overlay enables **persistent Chat History** using `localStorage` and enhances the Debug view with **message count** + **Clear Chat History`**.
 
-## Diagram
-<p align="center">
-  <img src="./muse-chat-git-flow.svg" alt="Muse Chat Git Flow" width="900"/>
-</p>
+## Files Included
+- `src/context/ChatContext.tsx` — persists messages under `museChatHistory`.
+- `src/components/ChatLog.tsx` — auto-scrolls and shows **absolute timestamps**.
+- `src/components/Sidebar.tsx` — Debug shows message count and adds **Clear Chat History**.
 
-## Branch Roles
+## Install
+Copy these files into your project, replacing existing ones. Then run:
+```bash
+npm run dev
+```
 
-- <strong>main</strong>: Stable, production-ready branch. Releases are tagged here (e.g., <code>v1.2.8</code>).
-- <strong>develop/vX.Y.Z</strong>: Integration branch for a milestone (e.g., <code>develop/v1.2.9</code>). All features/fixes for that version merge here first.
-- <strong>feature/vX.Y.Z-*</strong>: Short-lived branches for new features (e.g., <code>feature/v1.2.9-chat-history</code>).
-- <strong>fix/vX.Y.Z-*</strong>: Short-lived branches for bug fixes during the milestone (e.g., <code>fix/v1.2.9-darkmode</code>).
+## Behavior
+- Each message (user + bot reply) is appended and stored in `localStorage`.
+- On refresh, chat history loads automatically.
+- Debug panel: shows message count + lets you clear history instantly.
 
-## Example Flow
-
-1. Create integration branch for milestone: <code>develop/v1.2.9</code>
-2. Create feature branches off develop: <code>feature/v1.2.9-chat-history</code>, etc.
-3. Merge features into develop with <code>--no-ff</code>:
-   <pre>git checkout develop/v1.2.9
-git merge feature/v1.2.9-chat-history --no-ff -m "Merge chat history feature"</pre>
-4. When stable, merge develop → main and tag the release:
-   <pre>git checkout main
-git merge develop/v1.2.9 --no-ff -m "Merge v1.2.9 milestone"
-git tag -a v1.2.9 -m "Release v1.2.9"
-git push origin main --tags</pre>
-
-## Quick Reference: Naming Conventions
-
-<table>
-  <thead>
-    <tr><th>Branch Type</th><th>Pattern</th><th>Example</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Feature</td><td><code>feature/&lt;version&gt;-&lt;name&gt;</code></td><td><code>feature/v1.2.9-chat-history</code></td></tr>
-    <tr><td>Fix</td><td><code>fix/&lt;version&gt;-&lt;desc&gt;</code></td><td><code>fix/v1.2.9-darkmode</code></td></tr>
-    <tr><td>Experiment</td><td><code>experiment/&lt;topic&gt;</code></td><td><code>experiment/rag-engine</code></td></tr>
-    <tr><td>Hotfix</td><td><code>hotfix/&lt;version&gt;</code></td><td><code>hotfix/v1.2.8.1</code></td></tr>
-  </tbody>
-</table>
+## Next (Phase 2 – Firestore Sync)
+A follow-on overlay will add Firestore-based chat history sync with toggles in Settings.
 
 ---
-© 2025 Muse Chat
+Muse Chat © 2025
