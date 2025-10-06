@@ -1,25 +1,37 @@
-# Muse Chat v1.2.9 – Chat History Overlay
+# Muse Sidebar Hybrid Overlay
 
-This overlay enables **persistent Chat History** using `localStorage` and enhances the Debug view with **message count** + **Clear Chat History`**.
+This overlay restores an **expandable/collapsible sidebar** *and* keeps the new **modal dialogs** for Profile, Settings, Debug. 
+It also adds placeholder modals for History, Cloud Sync, and Analytics.
 
-## Files Included
-- `src/context/ChatContext.tsx` — persists messages under `museChatHistory`.
-- `src/components/ChatLog.tsx` — auto-scrolls and shows **absolute timestamps**.
-- `src/components/Sidebar.tsx` — Debug shows message count and adds **Clear Chat History**.
+## ✨ Features
+- ☰ / ✕ expand-collapse sidebar (`w-16` ↔ `w-64`) with smooth transitions
+- Lucide icon set with **text labels when expanded**
+- Clicking any item opens a **modal** (centered, fade-in/out, ❌ close, click-outside + Esc)
+- Placeholders for **History**, **Cloud Sync**, **Analytics**
 
-## Install
-Copy these files into your project, replacing existing ones. Then run:
-```bash
-npm run dev
-```
+## 📂 Files Included
+- `src/components/Modal.tsx` — reusable modal (fade + close behaviors)
+- `src/components/PlaceholderModal.tsx` — generic "Coming soon…" dialog
+- `src/components/ProfileModal.tsx`
+- `src/components/SettingsModal.tsx`
+- `src/components/DebugModal.tsx`
+- `src/components/Sidebar.tsx` — hybrid sidebar (expand/collapse + modal triggers)
+- `README.md` — this guide
 
-## Behavior
-- Each message (user + bot reply) is appended and stored in `localStorage`.
-- On refresh, chat history loads automatically.
-- Debug panel: shows message count + lets you clear history instantly.
-
-## Next (Phase 2 – Firestore Sync)
-A follow-on overlay will add Firestore-based chat history sync with toggles in Settings.
+## 🧭 Installation
+1. Copy all files into `src/components/` (replace existing `Sidebar.tsx`).
+2. Ensure you have **lucide-react** installed:
+   ```bash
+   npm install lucide-react
+   ```
+3. Run your app:
+   ```bash
+   npm run dev
+   ```
+4. Test:
+   - Click ☰ to expand, ✕ to collapse
+   - Click each item → modal opens
+   - Click outside / press Esc / click ❌ → modal closes
 
 ---
 Muse Chat © 2025
