@@ -1,5 +1,6 @@
 import React from "react";
 import "./services/firebase";
+import { ProfileProvider } from "./context/ProfileContext";
 import { SettingsProvider } from "./context/SettingsContext";
 import { ToastProvider } from "./context/ToastContext";
 import { ChatProvider } from "./context/ChatContext";
@@ -12,6 +13,7 @@ const version = packageJson.version;
 
 export default function App() {
   return (
+    <ProfileProvider>
     <SettingsProvider>
       <ToastProvider>
         <ChatProvider>
@@ -35,5 +37,6 @@ export default function App() {
         </ChatProvider>
       </ToastProvider>
     </SettingsProvider>
+    </ProfileProvider>
   );
 }
